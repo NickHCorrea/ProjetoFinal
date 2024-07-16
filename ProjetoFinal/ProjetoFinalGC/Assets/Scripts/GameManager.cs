@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text _gameOverPoints;
     [SerializeField] public float BPM;
     [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private List<Color> _buttonColors;
     private float timer = 0f;
     private bool _isPlaying = true;
     public float lifeTime;
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
         new Vector3(135, 1185, 0),
         new Vector3(405, 1185, 0)
     };
+    
     
     public float spawnInterval; // Intervalo de tempo em segundos entre cada spawn de nota
 
@@ -60,14 +62,20 @@ public class GameManager : MonoBehaviour
     {
         _points = 0;
         _gameOverScreen.SetActive(false);
-		
+        foreach(Transform child in buttonParent)
+        {
+            Destroy(child.gameObject);
+        }
+        _audioSource.Play();
+        _isPlaying = true;
+        timer = 0f;
     }
     public void AddButton(int index) 
     {
         GameObject newButton = Instantiate(buttonPrefab, buttonParent);
         newButton.GetComponent<Button>().onClick.AddListener(() => UpdatePoints(newButton));
         //buttonList.Add(newButton);
-        
+        newButton.GetComponent<Image>().color = _buttonColors[index];
         RectTransform rectTransform = newButton.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = _buttonPositions[index];
         
